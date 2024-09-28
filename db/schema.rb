@@ -19,7 +19,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_175929) do
     t.string "img_url"
     t.json "unit_price_info", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "is_worth"=>false}
     t.json "tenth_price_info", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "is_worth"=>false}
-    t.json "hundred_price", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "is_worth"=>false}
+    t.json "hundred_price_info", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "is_worth"=>false}
     t.string "ressource_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

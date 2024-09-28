@@ -15,7 +15,7 @@ class CreateItems < ActiveRecord::Migration[7.1]
         capital_gain: 0,
         is_worth: false,
         }
-      t.json :hundred_price, default: {
+      t.json :hundred_price_info, default: {
         price_list: [],
         median_price: 0,
         capital_gain: 0,
