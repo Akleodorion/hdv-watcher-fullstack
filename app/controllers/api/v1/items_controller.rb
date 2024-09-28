@@ -34,7 +34,7 @@ class Api::V1::ItemsController < ApplicationController
 
   def append(item_price_info, item_data_price, time)
     return unless item_price_info[:price_list][:price].last != item_data_price
-    item_price_info[:price_list] << { price: item_data[:price], time: time }
+    item_price_info[:price_list] << { price: item_data[:price], scrap_date: time }
     price_list = []
     item_price_info[:price_list].each do |price|
       price_list << price[:price]
