@@ -7,4 +7,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  namespace :api do
+    namespace :v1 do
+      get 'items/paginated_item', to: 'items#paginated_item'
+      patch 'items/scrap', to: 'items#scrap'
+    end
+  end
+  resources :items, only: %i[index show]
 end
