@@ -11,4 +11,6 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def paginated_item;end
+
+  def items_prices;end
 end
