@@ -34,7 +34,7 @@ end
 
 def is_worth?(median_price, last_price)
   return 0 if last_price.nil?
-  return median_price > ( last_price + (median_price * 0.02))
+  return median_price > ( last_price + (median_price * 0.02)) && last_price != 0
 end
 
 # Faire la requête au serveur heroku.
