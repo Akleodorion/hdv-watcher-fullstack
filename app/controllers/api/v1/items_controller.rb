@@ -1,16 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
 
-  def scrap
-  # on recoit une liste d'item depuis la requête.
-  # on itère sur la demande
-  # vérification de l'éxistence de l'item en BDD
-  # Si l'item existe.
-  # Append
-  # Sinon
-  # Creation.
-  end
-
-  def paginated_items
+  
+  def index
     items_count = Item.all.count
     priceType = paginated_items_params[:price_type]
     batch_index = paginated_items_params[:batch_index].to_i
@@ -43,12 +34,38 @@ class Api::V1::ItemsController < ApplicationController
     render json: items
   end
 
+  
 
-  def item_prices
+  def show
   item = Item.find(id: item_prices_params[:item_id])
   render json: item
   end
 
+  def scrap_entry
+    # on recoit une liste d'item depuis la requête.
+    # on itère sur la demande
+    # vérification de l'éxistence de l'item en BDD
+    # Si l'item existe.
+    # Append
+    # Sinon
+    # Creation.
+  end
+
+    
+  def scrap_info
+    #1. recoit les informations relative au scrapping.
+  end
+
+  def fetch_items_by_batch
+    #1 Récupère un nombre définie d'items de la BDD
+    #2. Offset se nombre depuis 0
+    #3. renvoie la liste de ces objets
+  end
+
+  def items_general_info
+    #1. Récupères des informations générales sur la BDD.
+    #2. Renvois ces informations pour être interprétés.
+  end
 
   private
 

@@ -7,12 +7,15 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  namespace :api do
-    namespace :v1 do
-      get 'items/paginated_items', to: 'items#paginated_items', defaults: { format: 'json' }
-      get 'items/item_prices', to: 'items#item_prices', defaults: { format: 'json' }
-      put 'items/scrap', to: 'items#scrap'
-    end
+  namespace :api do   
+      namespace :v1 do
+        resources :items, only: %i[show index] do
+          collection do
+            get 'scrap_entry'
+            get 'scrap_info'
+          end 
+        end
+      end
   end
   resources :items, only: %i[index show]
 end
