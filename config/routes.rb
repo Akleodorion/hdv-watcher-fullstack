@@ -9,10 +9,9 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :api do
     namespace :v1 do
-      resources :items, only: %i[show items]
-      get 'items/paginated_items', to: 'items#paginated_items', defaults: { format: 'json' }
-      get 'items/item_prices', to: 'items#item_prices', defaults: { format: 'json' }
-      put 'items/scrap', to: 'items#scrap'
+      resources :items, only: %i[show index]
+      get 'scrap_entry'
+      get 'scrap_info'
     end
   end
   resources :items, only: %i[index show]

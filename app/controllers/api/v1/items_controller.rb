@@ -1,6 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
 
-  def scrap
+  def scrap_entry
   # on recoit une liste d'item depuis la requête.
   items_data = JSON.parse(request.body.read, symbolize_names: true)
   time = Time.now
@@ -11,7 +11,10 @@ class Api::V1::ItemsController < ApplicationController
   render json: { message: 'Seed successful'}, status: :ok
   end
 
-  def paginated_items
+  def scrap_info;
+  end
+
+  def index
     items_count = Item.all.count
     priceType = paginated_items_params[:price_type]
     batch_index = paginated_items_params[:batch_index].to_i
@@ -45,7 +48,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
 
-  def item_prices
+  def show
   item = Item.find(id: item_prices_params[:item_id])
   render json: item
   end
