@@ -2,12 +2,13 @@ class Api::V1::ItemsController < ApplicationController
 
   def scrap
   # on recoit une liste d'item depuis la requête.
-  # on itère sur la demande
-  # vérification de l'éxistence de l'item en BDD
-  # Si l'item existe.
-  # Append
-  # Sinon
-  # Creation.
+  items_data = JSON.parse(request.body.read, symbolize_names: true)
+  time = Time.now
+
+  items_data.flatten.each do |item_data|
+    append_or_create(item_data, time).save
+  end
+  render json: { message: 'Seed successful'}, status: :ok
   end
 
   def paginated_items
@@ -58,5 +59,6 @@ class Api::V1::ItemsController < ApplicationController
 
   def item_prices_params
     params.permit(:item_id)
+
   end
 end
