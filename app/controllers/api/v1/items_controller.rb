@@ -1,5 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
-  
+
   def index
     items_count = Item.all.count
     priceType = paginated_items_params[:price_type]
