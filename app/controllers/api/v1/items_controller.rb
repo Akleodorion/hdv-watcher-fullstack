@@ -1,5 +1,4 @@
 class Api::V1::ItemsController < ApplicationController
-
   
   def index
     items_count = Item.all.count
@@ -75,5 +74,6 @@ class Api::V1::ItemsController < ApplicationController
 
   def item_prices_params
     params.permit(:item_id)
+
   end
 end
