@@ -7,12 +7,16 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  namespace :api do
-    namespace :v1 do
-      resources :items, only: %i[show index]
-      get 'scrap_entry'
-      get 'scrap_info'
-    end
+
+  namespace :api do   
+      namespace :v1 do
+        resources :items, only: %i[show index] do
+          collection do
+            get 'scrap_entry'
+            get 'scrap_info'
+          end 
+        end
+      end
   end
   resources :items, only: %i[index show]
 end
