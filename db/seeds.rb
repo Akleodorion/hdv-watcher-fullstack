@@ -56,19 +56,42 @@ def process_price_info(item, price_info_key, price_data, scrap_date)
   end
 end
 
-items_data.each do |item_data|
+def process_item_data(item_data)
   puts item_data[:name]
+    
+    item = Item.new(
+      name: item_data[:name],
+      img_url: item_data[:img_url],
+      ressource_type: item_data[:ressource_type]
+    )
   
-  item = Item.new(
-    name: item_data[:name],
-    img_url: item_data[:img_url],
-    ressource_type: item_data[:ressource_type]
-  )
-
-  process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
-  process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
-  process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
-
-  item.save!
+    process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
+    process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
+    process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
+  
+    item.save!
 end
 
+
+
+seeds_info_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items/seeds_info"
+seeds_items_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items/seeds_items"
+
+json_batch_data = URI.open(seeds_info_url).read
+batch_data = JSON.parse(json_batch_data, symbolize_names: true)
+
+# Nombre de batch d'item à récupérer
+request_number = batch_data[:batch_count]
+
+
+request_number.times do |n|
+  params = {batch_index: n}
+  uri = Uri(seeds_items_url)
+  uri.query = Uri.encode_www_form(params)
+  json_items_data = URI.open(seeds_items_url).read
+  items_data = JSON.parse(json_items_data, symbolize_names: true)
+
+  items_data.each do |item_data|
+    process_item_data(items_data)
+  end
+end
