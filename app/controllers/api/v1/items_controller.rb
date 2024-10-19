@@ -57,13 +57,15 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def seeds_items
+
   end
 
   def seeds_info
-    items_count = Item.all.count
+    batch_size = 2
+    batch_count = (Item.all.count.to_f / batch_size).ceil
 
     render json: {
-      items_count: items_count
+      batch_count:
     }
   end
 
