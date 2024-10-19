@@ -1,5 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
-
+  before_action :set_batch_size, only: %i[seeds_items seeds_info]
 
    # ***********************API MOBILE *************************    
   def index
@@ -57,12 +57,17 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def seeds_items
+  batch_index = params[:batch_index].to_i
 
+  @items = Item.all
+  @items = @items.limit(@batch_size)
+  @items = @items.offset(batch_index * @batch_size)
+
+  render json: @items
   end
 
   def seeds_info
-    batch_size = 2
-    batch_count = (Item.all.count.to_f / batch_size).ceil
+    batch_count = (Item.all.count.to_f / @batch_size).ceil
 
     render json: {
       batch_count:
@@ -78,5 +83,9 @@ class Api::V1::ItemsController < ApplicationController
   def item_prices_params
     params.permit(:item_id)
 
+  end
+
+  def set_batch_size 
+    @batch_size = 3
   end
 end
