@@ -36,8 +36,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-  item = Item.find(id: item_prices_params[:item_id])
-  render json: item
+  @item = Item.find(params[:id])
   end
   
   # ***********************Scrap related *************************    
@@ -81,7 +80,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def item_prices_params
-    params.permit(:item_id)
+    params.permit(:id)
 
   end
 

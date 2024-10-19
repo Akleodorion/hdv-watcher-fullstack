@@ -112,6 +112,7 @@ GEM
     irb (1.14.1)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
+    jb (0.8.2)
     jbuilder (2.13.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
@@ -246,7 +247,7 @@ GEM
 PLATFORMS
   aarch64-linux
   arm-linux
-  arm64-darwin
+  arm64-darwin-23
   x86-linux
   x86_64-darwin
   x86_64-linux
@@ -257,6 +258,7 @@ DEPENDENCIES
   cssbundling-rails
   debug
   error_highlight (>= 0.4.0)
+  jb
   jbuilder
   jsbundling-rails
   pg (~> 1.1)
