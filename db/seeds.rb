@@ -8,12 +8,13 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+Item.destroy_all
 
 def filter_zero_and_doubles(prices,scrap_dates)
   filtered_array = []
   prices.each_with_index do |price,i|
-    if filtered_array.last != price && price != 0
-      filtered_array <<  { price: price, scrap_date: scrap_dates[i]}
+    if filtered_array.last != price.to_i && price.to_i != 0
+      filtered_array <<  { price: price.to_i, scrap_date: scrap_dates[i]}
     end
   end
   return filtered_array
@@ -37,11 +38,11 @@ def is_worth?(median_price, last_price)
   return median_price > ( last_price + (median_price * 0.02)) && last_price != 0
 end
 
-# Faire la requête au serveur heroku.
-url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items"
-json_data = URI.open(url).read
+# # Faire la requête au serveur heroku.
+# url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items"
+# json_data = URI.open(url).read
 
-items_data = JSON.parse(json_data, symbolize_names: true)
+# items_data = JSON.parse(json_data, symbolize_names: true)
 
 def process_price_info(item, price_info_key, price_data, scrap_date)
   item[price_info_key][:price_list] = filter_zero_and_doubles(price_data, scrap_date)
@@ -56,19 +57,58 @@ def process_price_info(item, price_info_key, price_data, scrap_date)
   end
 end
 
-items_data.each do |item_data|
+def process_item_data(item_data)
   puts item_data[:name]
+    
+    item = Item.new(
+      name: item_data[:name],
+      img_url: item_data[:img_url],
+      ressource_type: item_data[:ressource_type]
+    )
   
-  item = Item.new(
-    name: item_data[:name],
-    img_url: item_data[:img_url],
-    ressource_type: item_data[:ressource_type]
-  )
-
-  process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
-  process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
-  process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
-
-  item.save!
+    process_price_info(item, :unit_price_info, item_data[:unit_price].to_i, item_data[:scrap_date])
+    process_price_info(item, :tenth_price_info, item_data[:tenth_price].to_i, item_data[:scrap_date])
+    process_price_info(item, :hundred_price_info, item_data[:hundred_price].to_i, item_data[:scrap_date])
+  
+    item.save!
 end
 
+
+
+seeds_info_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items/scrap_info"
+seeds_items_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items"
+
+json_batch_data = URI.open(seeds_info_url).read
+batch_data = JSON.parse(json_batch_data, symbolize_names: true)
+
+# Nombre de batch d'item à récupérer
+request_number = batch_data[:batch_count].to_i
+
+
+request_number.times do |n|
+
+  puts "batch: n° #{n}"
+  params = {batch_index: n}
+  p params
+  uri = URI(seeds_items_url)
+  uri.query = URI.encode_www_form(params)
+  p uri.query
+  json_items_data = URI.open(uri).read
+  items_data = JSON.parse(json_items_data, symbolize_names: true)
+
+  items_data.each do |item_data|
+    puts item_data[:name]
+    
+    item = Item.new(
+      name: item_data[:name],
+      img_url: item_data[:img_url],
+      ressource_type: item_data[:ressource_type]
+    )
+  
+    process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
+    process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
+    process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
+  
+    item.save!
+  end
+end
