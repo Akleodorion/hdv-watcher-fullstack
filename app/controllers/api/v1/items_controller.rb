@@ -1,5 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
+  before_action :set_batch_size, only: %i[seeds_items seeds_info]
 
+   # ***********************API MOBILE *************************    
   def index
     items_count = Item.all.count
     priceType = paginated_items_params[:price_type]
@@ -33,13 +35,13 @@ class Api::V1::ItemsController < ApplicationController
     render json: items
   end
 
-  
-
   def show
   item = Item.find(id: item_prices_params[:item_id])
   render json: item
   end
-
+  
+  # ***********************Scrap related *************************    
+  
   def scrap_entry
     # on recoit une liste d'item depuis la requête.
     # on itère sur la demande
@@ -50,20 +52,26 @@ class Api::V1::ItemsController < ApplicationController
     # Creation.
   end
 
-    
   def scrap_info
-    #1. recoit les informations relative au scrapping.
+    #recoit les informations relative au scrapping.
   end
 
-  def fetch_items_by_batch
-    #1 Récupère un nombre définie d'items de la BDD
-    #2. Offset se nombre depuis 0
-    #3. renvoie la liste de ces objets
+  def seeds_items
+  batch_index = params[:batch_index].to_i
+
+  @items = Item.all
+  @items = @items.limit(@batch_size)
+  @items = @items.offset(batch_index * @batch_size)
+
+  render json: @items
   end
 
-  def items_general_info
-    #1. Récupères des informations générales sur la BDD.
-    #2. Renvois ces informations pour être interprétés.
+  def seeds_info
+    batch_count = (Item.all.count.to_f / @batch_size).ceil
+
+    render json: {
+      batch_count:
+    }
   end
 
   private
@@ -75,5 +83,9 @@ class Api::V1::ItemsController < ApplicationController
   def item_prices_params
     params.permit(:item_id)
 
+  end
+
+  def set_batch_size 
+    @batch_size = 3
   end
 end
