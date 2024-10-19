@@ -1,30 +1,15 @@
 class Api::V1::ItemsController < ApplicationController
+  include ItemsActiveRecords
   before_action :set_batch_size, only: %i[seeds_items seeds_info]
 
    # ***********************API MOBILE *************************    
   def index
-    is_worth_active_record = {
-      "unit_price": "unit_price_info->>'is_worth' = 'true'",
-      "tenth_price": "tenth_price_info->>'is_worth' = 'true'",
-      "hundred_price": "hundred_price_info->>'is_worth' = 'true'"
-    }
+    price_type = paginated_items_params[:price_type].to_sym
+    @selected_batch_size = paginated_items_params[:batch_size].to_i
 
-    order_active_record = {
-      "unit_price": "CAST(unit_price_info->>'capital_gain' AS FLOAT) DESC",
-      "tenth_price": "CAST(tenth_price_info->>'capital_gain' AS FLOAT) DESC",
-      "hundred_price": "CAST(hundred_price_info->>'capital_gain' AS FLOAT) DESC"
-    }
-
-    priceType = paginated_items_params[:price_type].to_sym
-    @batch_size = paginated_items_params[:batch_size].to_i
-    @items  = Item.where(ressource_type: RessourceTypes.types)
-    @items = @items.where(is_worth_active_record[priceType])
-    @items_count = Item.where(ressource_type: RessourceTypes.types).where(is_worth_active_record[priceType]).count
-    @items = @items.order(Arel.sql(order_active_record[priceType]))
-      .order(Arel.sql(order_active_record[priceType]))
-      .limit(@batch_size)
-      .offset( paginated_items_params[:batch_index].to_i * @batch_size)
-    
+    @items = fetch_items_by_price_type(price_type)
+    @items_count = @items.count
+    @items = paginated_items(@items, @selected_batch_size)
   end
 
   def show
@@ -73,6 +58,16 @@ class Api::V1::ItemsController < ApplicationController
 
   def item_prices_params
     params.permit(:id)
+  end
+
+  def fetch_items_by_price_type(price_type)
+    items = Item.where(ressource_type: RessourceTypes.types)
+    items = items.where(is_worth_by_type(price_type))
+    items.order(order_capital_gain_by_type(price_type))
+  end
+
+  def paginated_items(items, batch_size)
+    items.limit(batch_size).offset(paginated_items_params[:batch_index].to_i * batch_size)
   end
 
   def set_batch_size 
