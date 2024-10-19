@@ -73,7 +73,6 @@ class Api::V1::ItemsController < ApplicationController
 
   def item_prices_params
     params.permit(:id)
-
   end
 
   def set_batch_size 
