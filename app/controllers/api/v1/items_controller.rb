@@ -3,41 +3,32 @@ class Api::V1::ItemsController < ApplicationController
 
    # ***********************API MOBILE *************************    
   def index
-    items_count = Item.all.count
-    priceType = paginated_items_params[:price_type]
-    batch_index = paginated_items_params[:batch_index].to_i
-    batch_size = paginated_items_params[:batch_size].to_i
-    number_of_baches = items_count.remainder(batch_size) == 0 ? (items_count / batch_size) : ( items_count / batch_size) + 1
-    items =
-    Item.where(ressource_type: RessourceTypes.types)
-      .where("unit_price_info->>'is_worth' = 'true'")
-      .order(Arel.sql("CAST(unit_price_info->>'capital_gain' AS FLOAT) DESC"))
-      .limit(batch_size)
-      .offset( batch_index * batch_size)
-    
-    # formated_items = [] 
-    # items.each do |item|
-    #   formated_items << {
-    #   name: item[:name],
-    #   img_url: item[:img_url],
-    #   ressource_type: item[:ressource_type],
-    #   current_price: item["unit_price_info"][:price_list].last[:price],
-    #   median_price: item["unit_price_info"][:median_price],
-    #   capital_gain: item["unit_price_info"][:capital_gain]
-    #   }
-    # end
-    
-    # response = {
-    #   "items": formated_items,
-    #   "batch_size": number_of_baches,
-    # }
+    is_worth_active_record = {
+      "unit_price": "unit_price_info->>'is_worth' = 'true'",
+      "tenth_price": "tenth_price_info->>'is_worth' = 'true'",
+      "hundred_price": "hundred_price_info->>'is_worth' = 'true'"
+    }
 
-    render json: items
+    order_active_record = {
+      "unit_price": "CAST(unit_price_info->>'capital_gain' AS FLOAT) DESC",
+      "tenth_price": "CAST(tenth_price_info->>'capital_gain' AS FLOAT) DESC",
+      "hundred_price": "CAST(hundred_price_info->>'capital_gain' AS FLOAT) DESC"
+    }
+
+    priceType = paginated_items_params[:price_type].to_sym
+    @batch_size = paginated_items_params[:batch_size].to_i
+    @items  = Item.where(ressource_type: RessourceTypes.types)
+    @items = @items.where(is_worth_active_record[priceType])
+    @items_count = Item.where(ressource_type: RessourceTypes.types).where(is_worth_active_record[priceType]).count
+    @items = @items.order(Arel.sql(order_active_record[priceType]))
+      .order(Arel.sql(order_active_record[priceType]))
+      .limit(@batch_size)
+      .offset( paginated_items_params[:batch_index].to_i * @batch_size)
+    
   end
 
   def show
-  item = Item.find(id: item_prices_params[:item_id])
-  render json: item
+  @item = Item.find(item_prices_params[:id])
   end
   
   # ***********************Scrap related *************************    
@@ -81,11 +72,13 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def item_prices_params
-    params.permit(:item_id)
+    params.permit(:id)
 
   end
 
   def set_batch_size 
     @batch_size = 3
   end
+
+
 end

@@ -1,0 +1,9 @@
+json = {
+    item: {
+        id: @item.id,
+        name: @item.name,
+        unit_price_info: @item.unit_price_info["price_list"],
+        tenth_price_info: @item.tenth_price_info["price_list"],
+        hundred_price_info: @item.hundred_price_info["price_list"]
+    }
+}
