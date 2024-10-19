@@ -50,9 +50,9 @@ class Api::V1::ItemsController < ApplicationController
     # Creation.
   end
 
-    
+  #Scrap related    
   def scrap_info
-    #1. recoit les informations relative au scrapping.
+    #recoit les informations relative au scrapping.
   end
 
   def fetch_items_by_batch
@@ -61,10 +61,6 @@ class Api::V1::ItemsController < ApplicationController
     #3. renvoie la liste de ces objets
   end
 
-  def items_general_info
-    #1. Récupères des informations générales sur la BDD.
-    #2. Renvois ces informations pour être interprétés.
-  end
 
   private
 
