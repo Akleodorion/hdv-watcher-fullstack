@@ -58,7 +58,15 @@ class Api::V1::ItemsController < ApplicationController
 
   def seeds_items
   end
-  
+
+  def seeds_info
+    items_count = Item.all.count
+
+    render json: {
+      items_count: items_count
+    }
+  end
+
   private
 
   def paginated_items_params

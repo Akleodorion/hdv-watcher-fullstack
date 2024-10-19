@@ -15,6 +15,7 @@ Rails.application.routes.draw do
             get 'scrap_entry'
             get 'scrap_info'
             get 'seeds_items'
+            get 'seeds_info'
           end 
         end
       end
