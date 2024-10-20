@@ -6,16 +6,19 @@ def retrieve_info
             img_url: item.img_url,
             ressource_type: item.ressource_type,
             unit_price_info: {
+                price_list: [],
                 median_price: item.unit_price_info&.dig("median_price") || 0,
                 capital_gain: item.unit_price_info&.dig("capital_gain").ceil || 0,
                 current_price: item.unit_price_info["price_list"].last&.dig("price") || 0,
             },
             tenth_price_info: {
+                price_list: [],
                 median_price: item.tenth_price_info&.dig("median_price") || 0,
                 capital_gain: item.tenth_price_info&.dig("capital_gain").ceil || 0,
                 current_price: item.tenth_price_info["price_list"].last&.dig("price") || 0,
             },
             hundred_price_info: {
+                price_list: [],
                 median_price: item.hundred_price_info&.dig("median_price") || 0,
                 capital_gain: item.hundred_price_info&.dig("capital_gain").ceil || 0,
                 current_price: item.hundred_price_info["price_list"].last&.dig("price") || 0,
