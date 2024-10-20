@@ -17,6 +17,6 @@ module ItemsActiveRecords
       "tenth_price": "CAST(tenth_price_info->>'capital_gain' AS FLOAT) DESC",
       "hundred_price": "CAST(hundred_price_info->>'capital_gain' AS FLOAT) DESC"
     }
-    order_active_record[price_type]
+    Arel.sql(order_active_record[price_type])
   end
 end

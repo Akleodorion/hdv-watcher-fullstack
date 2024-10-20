@@ -71,7 +71,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def set_batch_size 
-    @batch_size = 3
+    @batch_size = 500
   end
 
 
