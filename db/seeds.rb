@@ -27,15 +27,15 @@ def calculate_median_price(array)
   array.count % 2 == 1 ? array[middle] : (array[middle - 1] + array[middle])/2
 end
 
-def calculate_capital_gain(median_price, last_price)
-  return 0 if last_price.nil?
+def calculate_capital_gain(median_price, current_price)
+  return 0 if current_price.nil?
   
-  return median_price - ( last_price + (median_price * 0.02))
+  return median_price - ( current_price + (median_price * 0.02))
 end
 
-def is_worth?(median_price, last_price)
-  return 0 if last_price.nil?
-  return median_price > ( last_price + (median_price * 0.02)) && last_price != 0
+def is_worth?(median_price, current_price)
+  return 0 if current_price.nil?
+  return median_price > ( current_price + (median_price * 0.02)) && current_price != 0
 end
 
 # # Faire la requête au serveur heroku.
@@ -51,9 +51,9 @@ def process_price_info(item, price_info_key, price_data, scrap_date)
   item[price_info_key][:median_price] = calculate_median_price(prices)
   
   unless item[price_info_key][:price_list].empty?
-    last_price = item[price_info_key][:price_list].last[:price]
-    item[price_info_key][:capital_gain] = calculate_capital_gain(item[price_info_key][:median_price], last_price)
-    item[price_info_key][:is_worth] = is_worth?(item[price_info_key][:median_price], last_price)
+    item[price_info_key][:current_price] = item[price_info_key][:price_list].last[:price]
+    item[price_info_key][:capital_gain] = calculate_capital_gain(item[price_info_key][:median_price], item[price_info_key][:current_price])
+    item[price_info_key][:is_worth] = is_worth?(item[price_info_key][:median_price], item[price_info_key][:current_price])
   end
 end
 
