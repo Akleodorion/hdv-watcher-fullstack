@@ -32,5 +32,4 @@ json = {
     number_of_batches: (@items_count.to_f / @selected_batch_size).ceil
 }
 
-
-
+return json

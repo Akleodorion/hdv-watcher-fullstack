@@ -13,8 +13,8 @@ Item.destroy_all
 def filter_zero_and_doubles(prices,scrap_dates)
   filtered_array = []
   prices.each_with_index do |price,i|
-    if filtered_array.last != price.to_i && price.to_i != 0
-      filtered_array <<  { price: price.to_i, scrap_date: scrap_dates[i]}
+    if (filtered_array.last&.dig(:price) || 0) != price.to_i && price.to_i != 0
+      filtered_array <<  { price: price.to_i, scrap_date: scrap_dates[i] }
     end
   end
   return filtered_array
@@ -66,9 +66,9 @@ def process_item_data(item_data)
       ressource_type: item_data[:ressource_type]
     )
   
-    process_price_info(item, :unit_price_info, item_data[:unit_price].to_i, item_data[:scrap_date])
-    process_price_info(item, :tenth_price_info, item_data[:tenth_price].to_i, item_data[:scrap_date])
-    process_price_info(item, :hundred_price_info, item_data[:hundred_price].to_i, item_data[:scrap_date])
+    process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
+    process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
+    process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
   
     item.save!
 end
