@@ -18,7 +18,7 @@ def retrieve_unit_price_info(price_type, item)
             price_list: [],
             median_price: item.median_price.to_i || 0,
             capital_gain: item.capital_gain.to_f.ceil || 0,
-            # current_price: item.unit_price_info["price_list"].last&.dig("price") || 0,
+            current_price: item.current_price.to_i || 0,
         }
         
     end
@@ -36,7 +36,7 @@ def retrieve_tenth_price_info(price_type, item)
             price_list: [],
             median_price: item.median_price.to_i || 0,
             capital_gain: item.capital_gain.to_f.ceil || 0,
-            # current_price: item.tenth_price_info["price_list"].last&.dig("price") || 0,
+            current_price: item.current_price.to_i || 0,
         }
         
     end
@@ -54,7 +54,7 @@ def retrieve_hundred_price_info(price_type, item)
             price_list: [],
             median_price: item.median_price.to_i || 0,
             capital_gain: item.capital_gain.to_f.ceil || 0,
-            # current_price: item.hundred_price_info["price_list"].last&.dig("price") || 0,
+            current_price: item.current_price.to_i || 0,
         }
         
     end

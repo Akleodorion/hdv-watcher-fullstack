@@ -17,9 +17,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_175929) do
   create_table "items", force: :cascade do |t|
     t.string "name"
     t.string "img_url"
-    t.json "unit_price_info", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "current_price"=>0, "is_worth"=>false}
-    t.json "tenth_price_info", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "current_price"=>0, "is_worth"=>false}
-    t.json "hundred_price_info", default: {"price_list"=>[], "median_price"=>0, "capital_gain"=>0, "current_price"=>0, "is_worth"=>false}
+    t.jsonb "unit_price_info", default: {"is_worth"=>false, "price_list"=>[], "capital_gain"=>0, "median_price"=>0, "current_price"=>0}
+    t.jsonb "tenth_price_info", default: {"is_worth"=>false, "price_list"=>[], "capital_gain"=>0, "median_price"=>0, "current_price"=>0}
+    t.jsonb "hundred_price_info", default: {"is_worth"=>false, "price_list"=>[], "capital_gain"=>0, "median_price"=>0, "current_price"=>0}
     t.string "ressource_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
