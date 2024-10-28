@@ -1,74 +1,38 @@
 def retrieve_info
-    @items.map do |item| 
-        {
-            id: item.id,
-            name: item.name,
-            img_url: item.img_url,
-            ressource_type: item.ressource_type,
-            unit_price_info: retrieve_unit_price_info(@price_type,item),
-            tenth_price_info: retrieve_tenth_price_info(@price_type,item),
-            hundred_price_info: retrieve_hundred_price_info(@price_type,item),
-        }
+    @items.map do |item|
+      {
+        id: item.id,
+        name: item.name,
+        img_url: item.img_url,
+        ressource_type: item.ressource_type,
+        unit_price_info: retrieve_price_info(:unit_price, item),
+        tenth_price_info: retrieve_price_info(:tenth_price, item),
+        hundred_price_info: retrieve_price_info(:hundred_price, item),
+      }
     end
 end
-
-def retrieve_unit_price_info(price_type, item)
-    if(price_type == :unit_price)
-        return {
-            price_list: [],
-            median_price: item.median_price.to_i || 0,
-            capital_gain: item.capital_gain.to_f.ceil || 0,
-            current_price: item.current_price.to_i || 0,
-        }
-        
-    end
-    return {
-                price_list: [],
-                median_price:  0,
-                capital_gain:  0,
-                current_price:  0,
-            }
-end
-
-def retrieve_tenth_price_info(price_type, item)
-    if(price_type == :tenth_price)
-        return {
-            price_list: [],
-            median_price: item.median_price.to_i || 0,
-            capital_gain: item.capital_gain.to_f.ceil || 0,
-            current_price: item.current_price.to_i || 0,
-        }
-        
-    end
-    return {
-        price_list: [],
-        median_price:  0,
-        capital_gain:  0,
-        current_price:  0,
+  
+def retrieve_price_info(expected_price_type, item)
+if @price_type == expected_price_type
+    {
+    price_list: [],
+    median_price: item.median_price.to_i || 0,
+    capital_gain: item.capital_gain.to_f.ceil || 0,
+    current_price: item.current_price.to_i || 0,
+    }
+else
+    {
+    price_list: [],
+    median_price: 0,
+    capital_gain: 0,
+    current_price: 0,
     }
 end
-
-def retrieve_hundred_price_info(price_type, item)
-    if(price_type == :hundred_price)
-        return {
-            price_list: [],
-            median_price: item.median_price.to_i || 0,
-            capital_gain: item.capital_gain.to_f.ceil || 0,
-            current_price: item.current_price.to_i || 0,
-        }
-        
-    end
-    return {
-        price_list: [],
-        median_price:  0,
-        capital_gain:  0,
-        current_price:  0,
-    }
 end
 
 json = {
-    items: retrieve_info,
-    number_of_batches: (@items_count.to_f / @selected_batch_size).ceil
+items: retrieve_info,
+number_of_batches: (@items_count.to_f / @selected_batch_size).ceil
 }
 
 return json
