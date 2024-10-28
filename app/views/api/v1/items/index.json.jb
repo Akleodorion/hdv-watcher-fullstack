@@ -5,26 +5,65 @@ def retrieve_info
             name: item.name,
             img_url: item.img_url,
             ressource_type: item.ressource_type,
-            unit_price_info: {
-                price_list: [],
-                median_price: item.unit_price_info&.dig("median_price") || 0,
-                capital_gain: item.unit_price_info&.dig("capital_gain").ceil || 0,
-                current_price: item.unit_price_info["price_list"].last&.dig("price") || 0,
-            },
-            tenth_price_info: {
-                price_list: [],
-                median_price: item.tenth_price_info&.dig("median_price") || 0,
-                capital_gain: item.tenth_price_info&.dig("capital_gain").ceil || 0,
-                current_price: item.tenth_price_info["price_list"].last&.dig("price") || 0,
-            },
-            hundred_price_info: {
-                price_list: [],
-                median_price: item.hundred_price_info&.dig("median_price") || 0,
-                capital_gain: item.hundred_price_info&.dig("capital_gain").ceil || 0,
-                current_price: item.hundred_price_info["price_list"].last&.dig("price") || 0,
-            },
+            unit_price_info: retrieve_unit_price_info(@price_type,item),
+            tenth_price_info: retrieve_tenth_price_info(@price_type,item),
+            hundred_price_info: retrieve_hundred_price_info(@price_type,item),
         }
     end
+end
+
+def retrieve_unit_price_info(price_type, item)
+    if(price_type == :unit_price)
+        return {
+            price_list: [],
+            median_price: item.median_price.to_i || 0,
+            capital_gain: item.capital_gain.to_f.ceil || 0,
+            # current_price: item.unit_price_info["price_list"].last&.dig("price") || 0,
+        }
+        
+    end
+    return {
+                price_list: [],
+                median_price:  0,
+                capital_gain:  0,
+                current_price:  0,
+            }
+end
+
+def retrieve_tenth_price_info(price_type, item)
+    if(price_type == :tenth_price)
+        return {
+            price_list: [],
+            median_price: item.median_price.to_i || 0,
+            capital_gain: item.capital_gain.to_f.ceil || 0,
+            # current_price: item.tenth_price_info["price_list"].last&.dig("price") || 0,
+        }
+        
+    end
+    return {
+        price_list: [],
+        median_price:  0,
+        capital_gain:  0,
+        current_price:  0,
+    }
+end
+
+def retrieve_hundred_price_info(price_type, item)
+    if(price_type == :hundred_price)
+        return {
+            price_list: [],
+            median_price: item.median_price.to_i || 0,
+            capital_gain: item.capital_gain.to_f.ceil || 0,
+            # current_price: item.hundred_price_info["price_list"].last&.dig("price") || 0,
+        }
+        
+    end
+    return {
+        price_list: [],
+        median_price:  0,
+        capital_gain:  0,
+        current_price:  0,
+    }
 end
 
 json = {

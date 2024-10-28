@@ -4,11 +4,11 @@ class Api::V1::ItemsController < ApplicationController
 
    # ***********************API MOBILE *************************    
   def index
-    price_type = paginated_items_params[:price_type].to_sym
+    @price_type = paginated_items_params[:price_type].to_sym
+    @items_count = fetch_items_by_price_type(@price_type).length
     @selected_batch_size = paginated_items_params[:batch_size].to_i
 
-    @items = fetch_items_by_price_type(price_type)
-    @items_count = @items.count
+    @items = fetch_items_by_price_type(@price_type)
     @items = paginated_items(@items, @selected_batch_size)
   end
 
@@ -63,6 +63,10 @@ class Api::V1::ItemsController < ApplicationController
   def fetch_items_by_price_type(price_type)
     items = Item.where(ressource_type: RessourceTypes.types)
     items = items.where(is_worth_by_type(price_type))
+    items = items.select('id','name','img_url', 'ressource_type')
+    items = items.select(select_median_price_by_type(price_type))
+    items = items.select(select_capital_gain_by_type(price_type))
+    items = items.select(select_current_price_by_type(price_type))
     items.order(order_capital_gain_by_type(price_type))
   end
 
