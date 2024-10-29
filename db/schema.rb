@@ -26,11 +26,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_29_174848) do
   end
 
   create_table "price_histories", force: :cascade do |t|
-    t.integer "median_price"
-    t.integer "capital_gain"
-    t.integer "current_price"
+    t.integer "median_price", null: 0
+    t.integer "capital_gain", null: 0
+    t.integer "current_price", null: 0
     t.boolean "is_worth", null: false
-    t.integer "price_type"
+    t.integer "price_type", null: 0
     t.bigint "item_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -38,7 +38,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_29_174848) do
   end
 
   create_table "prices", force: :cascade do |t|
-    t.integer "value"
+    t.integer "value", null: 0
     t.datetime "date"
     t.bigint "price_history_id", null: false
     t.datetime "created_at", null: false
