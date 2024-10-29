@@ -10,6 +10,10 @@ class Item < ApplicationRecord
 
   private
 
-  def set_basic_price_history;end
+  def set_basic_price_history
+    3.times do |n|
+      PriceHistory.create(price_type:0, item_id: self)
+    end
+  end
 
 end
