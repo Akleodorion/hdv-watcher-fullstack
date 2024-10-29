@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  value: 1
+  date: 2024-10-29 18:48:48
+  PriceHistory: one
+
+two:
+  value: 1
+  date: 2024-10-29 18:48:48
+  PriceHistory: two
