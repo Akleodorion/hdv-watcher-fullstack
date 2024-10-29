@@ -19,7 +19,9 @@ class PriceHistory < ApplicationRecord
 
   def set_current_price;end
 
-  def set_capital_gain;end
+  def set_capital_gain
+  self.capital_gain = median_price - (current_price + (median_price * 0.01).ceil )
+  end
 
   def set_is_worth
     self.is_worth = capital_gain > 0 && current_price != 0
