@@ -5,5 +5,11 @@ class Item < ApplicationRecord
   validates :img_url, :ressource_type, presence: true
   validates :name, presence: true, uniqueness: true
 
+  after_create :set_basic_price_history
+
+
+  private
+
+  def set_basic_price_history;end
 
 end
