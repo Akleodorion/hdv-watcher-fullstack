@@ -21,5 +21,7 @@ class PriceHistory < ApplicationRecord
 
   def set_capital_gain;end
 
-  def set_is_worth;end
+  def set_is_worth
+    self.is_worth = capital_gain > 0 && current_price != 0
+  end
 end
