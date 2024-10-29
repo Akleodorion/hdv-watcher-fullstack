@@ -4,4 +4,6 @@ class Item < ApplicationRecord
 
   validates :img_url, :ressource_type, presence: true
   validates :name, presence: true, uniqueness: true
+
+
 end
