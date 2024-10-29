@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  median_price: 1
+  capital_gain: 1
+  current_price: 1
+  item: one
+
+two:
+  median_price: 1
+  capital_gain: 1
+  current_price: 1
+  item: two
