@@ -17,10 +17,12 @@ class PriceHistory < ApplicationRecord
 
   def set_median_price;end
 
-  def set_current_price;end
+  def set_current_price
+    self.current_price = prices.last.value 
+  end
 
   def set_capital_gain
-  self.capital_gain = median_price - (current_price + (median_price * 0.01).ceil )
+    self.capital_gain = median_price - (current_price + (median_price * 0.01).ceil )
   end
 
   def set_is_worth
