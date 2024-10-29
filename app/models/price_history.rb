@@ -15,7 +15,21 @@ class PriceHistory < ApplicationRecord
 
   private
 
-  def set_median_price;end
+  def set_median_price
+    # Récupérer la liste des prix.
+    values = prices.map { |price| price.value }
+    # Ordonner les prix.
+    values.sort!
+    # Retirer les zero et les doublons.
+    filtered = []
+    values.each do |value|
+      filtered << value if value != 0 && value != filtered.last
+    end
+    # Déduire la longueur du tableau
+    middle = filtered.count / 2
+    # en déduire la médiane si c'est paire ou impaire.
+    self.median_price = filtered.count % 2 == 0 ? filtered[middle] : (filtered[middle] + filtered[middle + 1]) / 2
+  end
 
   def set_current_price
     self.current_price = prices.last.value 
