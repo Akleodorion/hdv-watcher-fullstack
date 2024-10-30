@@ -1,6 +1,6 @@
 class PriceHistory < ApplicationRecord
   belongs_to :item
-  has_many :prices
+  has_many :prices, dependent: :destroy
 
   enum :price_type, { unit: 0, tenth: 1, hundred: 2 }
 

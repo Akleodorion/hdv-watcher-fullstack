@@ -10,69 +10,6 @@
 
 Item.destroy_all
 
-def filter_zero_and_doubles(prices,scrap_dates)
-  filtered_array = []
-  prices.each_with_index do |price,i|
-    if (filtered_array.last&.dig(:price) || 0) != price.to_i && price.to_i != 0
-      filtered_array <<  { price: price.to_i, scrap_date: scrap_dates[i] }
-    end
-  end
-  return filtered_array
-end
-
-def calculate_median_price(array)
-  array.sort!
-  return 0 if array.empty?
-  middle = (array.count / 2)
-  array.count % 2 == 1 ? array[middle] : (array[middle - 1] + array[middle])/2
-end
-
-def calculate_capital_gain(median_price, current_price)
-  return 0 if current_price.nil?
-  
-  return median_price - ( current_price + (median_price * 0.02))
-end
-
-def is_worth?(median_price, current_price)
-  return 0 if current_price.nil?
-  return median_price > ( current_price + (median_price * 0.02)) && current_price != 0
-end
-
-# # Faire la requête au serveur heroku.
-# url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items"
-# json_data = URI.open(url).read
-
-# items_data = JSON.parse(json_data, symbolize_names: true)
-
-def process_price_info(item, price_info_key, price_data, scrap_date)
-  item[price_info_key][:price_list] = filter_zero_and_doubles(price_data, scrap_date)
-  prices = item[price_info_key][:price_list].map { |price| price[:price] }
-
-  item[price_info_key][:median_price] = calculate_median_price(prices)
-  
-  unless item[price_info_key][:price_list].empty?
-    item[price_info_key][:current_price] = item[price_info_key][:price_list].last[:price]
-    item[price_info_key][:capital_gain] = calculate_capital_gain(item[price_info_key][:median_price], item[price_info_key][:current_price])
-    item[price_info_key][:is_worth] = is_worth?(item[price_info_key][:median_price], item[price_info_key][:current_price])
-  end
-end
-
-def process_item_data(item_data)
-  puts item_data[:name]
-    
-    item = Item.new(
-      name: item_data[:name],
-      img_url: item_data[:img_url],
-      ressource_type: item_data[:ressource_type]
-    )
-  
-    process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
-    process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
-    process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
-  
-    item.save!
-end
-
 
 
 seeds_info_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items/scrap_info"
@@ -81,34 +18,45 @@ seeds_items_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items"
 json_batch_data = URI.open(seeds_info_url).read
 batch_data = JSON.parse(json_batch_data, symbolize_names: true)
 
-# Nombre de batch d'item à récupérer
 request_number = batch_data[:batch_count].to_i
 
-
 request_number.times do |n|
-
   puts "batch: n° #{n}"
-  params = {batch_index: n}
-  p params
+  params = { batch_index: n }
   uri = URI(seeds_items_url)
   uri.query = URI.encode_www_form(params)
-  p uri.query
   json_items_data = URI.open(uri).read
   items_data = JSON.parse(json_items_data, symbolize_names: true)
 
   items_data.each do |item_data|
     puts item_data[:name]
     
-    item = Item.new(
+    item = Item.create!(
       name: item_data[:name],
       img_url: item_data[:img_url],
       ressource_type: item_data[:ressource_type]
     )
-  
-    process_price_info(item, :unit_price_info, item_data[:unit_price], item_data[:scrap_date])
-    process_price_info(item, :tenth_price_info, item_data[:tenth_price], item_data[:scrap_date])
-    process_price_info(item, :hundred_price_info, item_data[:hundred_price], item_data[:scrap_date])
-  
-    item.save!
+
+    # Trouver ou créer les PriceHistories
+    price_histories = {
+      unit: item.price_histories.find_or_create_by!(price_type: 0),
+      tenth: item.price_histories.find_or_create_by!(price_type: 1),
+      hundred: item.price_histories.find_or_create_by!(price_type: 2)
+    }
+
+    # Préparer les données pour les prix en masse
+    prices_data = []
+    num = item_data[:unit_price].count
+    num.times do |i|
+      prices_data << { value: item_data[:unit_price][i], date: item_data[:scrap_date][i], price_history_id: price_histories[:unit].id }
+      prices_data << { value: item_data[:tenth_price][i], date: item_data[:scrap_date][i], price_history_id: price_histories[:tenth].id }
+      prices_data << { value: item_data[:hundred_price][i], date: item_data[:scrap_date][i], price_history_id: price_histories[:hundred].id }
+    end
+
+    # Insérer tous les prix en une seule requête
+    Price.insert_all(prices_data)
+
+    # Mettre à jour les PriceHistories
+    price_histories.values.each(&:update_price_history)
   end
 end
