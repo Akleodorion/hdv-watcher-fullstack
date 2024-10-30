@@ -1,13 +1,23 @@
 class Api::V1::ItemsController < ApplicationController
-  include ItemsActiveRecords
   before_action :set_batch_size, only: %i[seeds_items seeds_info]
 
    # ***********************API MOBILE *************************    
   def index
     @price_type = paginated_items_params[:price_type].to_sym
-    @items = fetch_items_by_price_type(@price_type)
     @selected_batch_size = paginated_items_params[:batch_size].to_i
-    @items = paginated_items(@items, @selected_batch_size)
+    batch_index = paginated_items_params[:batch_index].to_i
+    @price_type_map = {
+      unit_price: :unit,
+      tenth_price: :tenth,
+      hundred_price: :hundred,
+    }
+    @items = Item.joins(:price_histories)
+                  .where(ressource_type: RessourceTypes.types)
+                  .where(price_histories: { price_type: @price_type_map[@price_type], is_worth: true })
+                  .select('items.*, price_histories.capital_gain, price_histories.current_price, price_histories.median_price')
+                  .order('price_histories.capital_gain DESC')
+                  .limit(@selected_batch_size)
+                  .offset(batch_index * @selected_batch_size)
   end
 
   def show
@@ -59,15 +69,9 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def fetch_items_by_price_type(price_type)
-    price_type_map = {
-      unit_price: :unit,
-      tenth_price: :tenth,
-      hundred_price: :hundred,
-    }
     
-    return Item.joins(:price_histories)
-        .where(ressource_type: RessourceTypes.types)
-        .where(price_histories: { price_type: price_type_map[price_type], is_worth: true })
+    
+    return 
 
     
   end

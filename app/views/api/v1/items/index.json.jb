@@ -13,17 +13,26 @@ def retrieve_info
 end
   
 def retrieve_price_info(item, price_type_sym)
-  {
+  if (price_type_sym == @price_type_map[@price_type])
+    return {
+      price_list: [],
+      median_price: item.median_price,
+      capital_gain: item.capital_gain,
+      current_price: item.current_price,
+    }
+  end
+
+  return {
     price_list: [],
-    median_price: item.price_histories.find_by(price_type: price_type_sym).median_price,
-    capital_gain: item.price_histories.find_by(price_type: price_type_sym).capital_gain,
-    current_price: item.price_histories.find_by(price_type: price_type_sym).current_price,
+    median_price: 0,
+    capital_gain: 0,
+    current_price: 0,
   }
 end
 
 json = {
 items: retrieve_info,
-number_of_batches: (@items_count.to_f / @selected_batch_size).ceil
+number_of_batches: (@items.count / @selected_batch_size).ceil
 }
 
 return json
