@@ -5,34 +5,34 @@ def retrieve_info
         name: item.name,
         img_url: item.img_url,
         ressource_type: item.ressource_type,
-        unit_price_info: retrieve_price_info(:unit_price, item),
-        tenth_price_info: retrieve_price_info(:tenth_price, item),
-        hundred_price_info: retrieve_price_info(:hundred_price, item),
+        unit_price_info: retrieve_price_info(item, :unit),
+        tenth_price_info: retrieve_price_info(item, :tenth),
+        hundred_price_info: retrieve_price_info(item, :hundred),
       }
     end
 end
   
-def retrieve_price_info(expected_price_type, item)
-if @price_type == expected_price_type
-    {
-    price_list: [],
-    median_price: item.median_price.to_i || 0,
-    capital_gain: item.capital_gain.to_f.ceil || 0,
-    current_price: item.current_price.to_i || 0,
+def retrieve_price_info(item, price_type_sym)
+  if (price_type_sym == @price_type_map[@price_type])
+    return {
+      price_list: [],
+      median_price: item.median_price,
+      capital_gain: item.capital_gain,
+      current_price: item.current_price,
     }
-else
-    {
+  end
+
+  return {
     price_list: [],
     median_price: 0,
     capital_gain: 0,
     current_price: 0,
-    }
-end
+  }
 end
 
 json = {
 items: retrieve_info,
-number_of_batches: (@items_count.to_f / @selected_batch_size).ceil
+number_of_batches: (@items_count / @selected_batch_size).ceil
 }
 
 return json

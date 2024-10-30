@@ -1,27 +1,25 @@
+def retrieve_price_info_map(item_price_history)
+    return {
+        price_list: item_price_history.prices.where("value != 0").map { |a| {price: a.value, scrap_date: a.date} },
+        median_price: item_price_history.median_price || 0,
+        capital_gain: item_price_history.capital_gain || 0,
+        current_price: item_price_history.current_price || 0,
+    }
+end
+
+unit_price_info = @item.price_histories.find_by(price_type: :unit)
+tenth_price_info = @item.price_histories.find_by(price_type: :tenth)
+hundred_price_info = @item.price_histories.find_by(price_type: :hundred)
+
 json = {
     item: {
         id: @item.id,
         name: @item.name,
         img_url: @item.img_url,
         ressource_type: @item.ressource_type,
-        unit_price_info: {
-            price_list: @item.unit_price_info&.dig("price_list") || [],
-            median_price: @item.unit_price_info&.dig("median_price") || 0,
-            capital_gain: @item.unit_price_info&.dig("capital_gain").ceil || 0,
-            current_price: @item.unit_price_info["price_list"].last&.dig("price") || 0,
-        },
-        tenth_price_info: {
-            price_list: @item.tenth_price_info&.dig("price_list") || [],
-            median_price: @item.tenth_price_info&.dig("median_price") || 0,
-            capital_gain: @item.tenth_price_info&.dig("capital_gain").ceil || 0,
-            current_price: @item.tenth_price_info["price_list"].last&.dig("price") || 0,
-        },
-        hundred_price_info: {
-            price_list: @item.hundred_price_info&.dig("price_list") || [],
-            median_price: @item.hundred_price_info&.dig("median_price") || 0,
-            capital_gain: @item.hundred_price_info&.dig("capital_gain").ceil || 0,
-            current_price: @item.hundred_price_info["price_list"].last&.dig("price") || 0,
-        },
+        unit_price_info: retrieve_price_info_map(unit_price_info),
+        tenth_price_info: retrieve_price_info_map(tenth_price_info),
+        hundred_price_info: retrieve_price_info_map(hundred_price_info),
     }
 }
 
