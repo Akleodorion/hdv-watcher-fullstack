@@ -17,20 +17,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_29_174848) do
   create_table "items", force: :cascade do |t|
     t.string "name"
     t.string "img_url"
-    t.jsonb "unit_price_info", default: {"is_worth"=>false, "price_list"=>[], "capital_gain"=>0, "median_price"=>0, "current_price"=>0}
-    t.jsonb "tenth_price_info", default: {"is_worth"=>false, "price_list"=>[], "capital_gain"=>0, "median_price"=>0, "current_price"=>0}
-    t.jsonb "hundred_price_info", default: {"is_worth"=>false, "price_list"=>[], "capital_gain"=>0, "median_price"=>0, "current_price"=>0}
     t.string "ressource_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "price_histories", force: :cascade do |t|
-    t.integer "median_price", null: 0
-    t.integer "capital_gain", null: 0
-    t.integer "current_price", null: 0
+    t.integer "median_price"
+    t.integer "capital_gain"
+    t.integer "current_price"
     t.boolean "is_worth", null: false
-    t.integer "price_type", null: 0
+    t.integer "price_type"
     t.bigint "item_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -38,7 +35,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_29_174848) do
   end
 
   create_table "prices", force: :cascade do |t|
-    t.integer "value", null: 0
+    t.integer "value"
     t.datetime "date"
     t.bigint "price_history_id", null: false
     t.datetime "created_at", null: false
