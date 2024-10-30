@@ -5,10 +5,8 @@ class Api::V1::ItemsController < ApplicationController
    # ***********************API MOBILE *************************    
   def index
     @price_type = paginated_items_params[:price_type].to_sym
-    @items_count = fetch_items_by_price_type(@price_type).length
-    @selected_batch_size = paginated_items_params[:batch_size].to_i
-
     @items = fetch_items_by_price_type(@price_type)
+    @selected_batch_size = paginated_items_params[:batch_size].to_i
     @items = paginated_items(@items, @selected_batch_size)
   end
 
@@ -61,13 +59,17 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def fetch_items_by_price_type(price_type)
-    items = Item.where(ressource_type: RessourceTypes.types)
-    items = items.where(is_worth_by_type(price_type))
-    items = items.select('id','name','img_url', 'ressource_type')
-    items = items.select(select_median_price_by_type(price_type))
-    items = items.select(select_capital_gain_by_type(price_type))
-    items = items.select(select_current_price_by_type(price_type))
-    items.order(order_capital_gain_by_type(price_type))
+    price_type_map = {
+      unit_price: :unit,
+      tenth_price: :tenth,
+      hundred_price: :hundred,
+    }
+    
+    return Item.joins(:price_histories)
+        .where(ressource_type: RessourceTypes.types)
+        .where(price_histories: { price_type: price_type_map[price_type], is_worth: true })
+
+    
   end
 
   def paginated_items(items, batch_size)
