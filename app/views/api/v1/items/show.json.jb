@@ -1,6 +1,6 @@
 def retrieve_price_info_map(item_price_history)
     return {
-        price_list: item_price_history.prices.where("value != 0") || [],
+        price_list: item_price_history.prices.where("value != 0").map { |a| {price: a.value, scrap_date: a.date} },
         median_price: item_price_history.median_price || 0,
         capital_gain: item_price_history.capital_gain || 0,
         current_price: item_price_history.current_price || 0,

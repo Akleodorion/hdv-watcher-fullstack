@@ -11,6 +11,9 @@ class Api::V1::ItemsController < ApplicationController
       tenth_price: :tenth,
       hundred_price: :hundred,
     }
+    @items_count = Item.joins(:price_histories)
+                  .where(ressource_type: RessourceTypes.types)
+                  .where(price_histories: { price_type: @price_type_map[@price_type], is_worth: true }).count
     @items = Item.joins(:price_histories)
                   .where(ressource_type: RessourceTypes.types)
                   .where(price_histories: { price_type: @price_type_map[@price_type], is_worth: true })

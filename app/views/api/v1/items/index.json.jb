@@ -32,7 +32,7 @@ end
 
 json = {
 items: retrieve_info,
-number_of_batches: (@items.count / @selected_batch_size).ceil
+number_of_batches: (@items_count / @selected_batch_size).ceil
 }
 
 return json
