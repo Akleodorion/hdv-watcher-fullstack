@@ -15,12 +15,12 @@ class Api::V1::ItemsController < ApplicationController
                   .where(ressource_type: RessourceTypes.types)
                   .where(price_histories: { price_type: @price_type_map[@price_type], is_worth: true }).count
     @items = Item.joins(:price_histories)
-                  .where(ressource_type: RessourceTypes.types)
-                  .where(price_histories: { price_type: @price_type_map[@price_type], is_worth: true })
-                  .select('items.*, price_histories.capital_gain, price_histories.current_price, price_histories.median_price')
-                  .order('price_histories.capital_gain DESC')
-                  .limit(@selected_batch_size)
-                  .offset(batch_index * @selected_batch_size)
+             .where(ressource_type: RessourceTypes.types)
+             .where(price_histories: { price_type: @price_type_map[@price_type], is_worth: true })
+             .select('items.id, items.name, items.img_url, items.ressource_type, price_histories.capital_gain, price_histories.current_price, price_histories.median_price')
+             .order('price_histories.capital_gain DESC')
+             .limit(@selected_batch_size)
+             .offset(batch_index * @selected_batch_size)
   end
 
   def show
