@@ -10,13 +10,16 @@ Rails.application.routes.draw do
 
   namespace :api do   
       namespace :v1 do
-        resources :items, only: %i[show index] do
-          collection do
-            get 'scrap_entry'
-            get 'scrap_info'
-            get 'seeds_items'
-            get 'seeds_info'
-          end 
+        resources :items, only: %i[show index] 
+       
+        namespace :seeds do
+          get 'items'
+          get 'infos'
+        end
+    
+        namespace :scraps do
+          post 'entry'
+          get 'infos'
         end
       end
   end
