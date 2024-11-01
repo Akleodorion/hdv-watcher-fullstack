@@ -1,5 +1,4 @@
 class Api::V1::ItemsController < ApplicationController
-  before_action :set_batch_size, only: %i[seeds_items seeds_info]
 
    # ***********************API MOBILE *************************    
   def index
@@ -43,8 +42,6 @@ class Api::V1::ItemsController < ApplicationController
     #recoit les informations relative au scrapping.
   end
 
-  
-
   private
 
   def paginated_items_params
@@ -55,17 +52,8 @@ class Api::V1::ItemsController < ApplicationController
     params.permit(:id)
   end
 
-  def fetch_items_by_price_type(price_type)
-    
-    
-    return 
-
-    
-  end
-
   def paginated_items(items, batch_size)
     items.limit(batch_size).offset(paginated_items_params[:batch_index].to_i * batch_size)
   end
-
 
 end
