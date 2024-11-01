@@ -1,4 +1,4 @@
-class API::V1::ScrapsController < ApplicationController
+class Api::V1::ScrapsController < ApplicationController
 
   def entry
   end
