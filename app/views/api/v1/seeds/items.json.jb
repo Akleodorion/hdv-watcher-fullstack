@@ -1,23 +1,22 @@
 def price_info_map(item, price_type_enum)
   {
-          prices: item.price_histories.find_by(price_type: price_type_enum).prices.pluck(:value, :date).map { |value, date| { price: value, scrap_date: date } },
-          median_price: item.price_histories.find_by(price_type: price_type_enum).median_price,
-          capital_gain: item.price_histories.find_by(price_type: price_type_enum).capital_gain,
-          current_price: item.price_histories.find_by(price_type: price_type_enum).current_price,
-        }
+    prices: item.price_histories.find_by(price_type: price_type_enum).prices.pluck(:value, :date).map { |value, date| { price: value, scrap_date: date } },
+    median_price: item.price_histories.find_by(price_type: price_type_enum).median_price,
+    capital_gain: item.price_histories.find_by(price_type: price_type_enum).capital_gain,
+    current_price: item.price_histories.find_by(price_type: price_type_enum).current_price,
+  }
 end
-
 
 json = {
   items: @items.map do |item|
-      {
-        name: item.name,
-        img_url: item.img_url,
-        ressource_type: item.ressource_type,
-        unit_price: price_info_map(item, 0),
-        tenth_price: price_info_map(item, 1),
-        hundred_price: price_info_map(item, 2)
-      }
+    {
+      name: item.name,
+      img_url: item.img_url,
+      ressource_type: item.ressource_type,
+      unit_price: price_info_map(item, 0),
+      tenth_price: price_info_map(item, 1),
+      hundred_price: price_info_map(item, 2)
+    }
   end
 }
 
