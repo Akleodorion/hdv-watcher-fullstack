@@ -18,6 +18,9 @@ seeds_items_url = "https://hdv-watcher-3be496b8731a.herokuapp.com/items"
 json_batch_data = URI.open(seeds_info_url).read
 batch_data = JSON.parse(json_batch_data, symbolize_names: true)
 
+items_to_import = []
+prices_to_import = []
+items_data = []
 request_number = batch_data[:batch_count].to_i
 
 request_number.times do |n|
@@ -26,37 +29,42 @@ request_number.times do |n|
   uri = URI(seeds_items_url)
   uri.query = URI.encode_www_form(params)
   json_items_data = URI.open(uri).read
-  items_data = JSON.parse(json_items_data, symbolize_names: true)
+  items_temp_data = JSON.parse(json_items_data, symbolize_names: true)
+  items_data << items_temp_data
+end
 
-  items_data.each do |item_data|
-    puts item_data[:name]
+items_data.flatten.each do |item_data|
+  items_to_import << Item.new(name: item_data[:name], img_url: item_data[:img_url], ressource_type: item_data[:ressource_type])
+end
+p "Création des items"
+Item.import(items_to_import)
+
+price_history_to_import = Item.all.map do |item|
+  [
+    PriceHistory.new(price_type: "unit", item_id: item.id, is_worth: false),
+    PriceHistory.new(price_type: "tenth", item_id: item.id, is_worth: false),
+    PriceHistory.new(price_type: "hundred", item_id: item.id, is_worth: false)
+  ]
+end
+
+p "Création des prices history"
+PriceHistory.import(price_history_to_import.flatten)
+
+items_data.flatten.each do |item_data|
+  phs = PriceHistory.joins(:item).select("id").where( item: { name: item_data[:name] })
+  
+  item_data[:unit_price].each_with_index do |value, index|
+    date = item_data[:scrap_date][index]
+    prices_to_import << {value: value, date: date, price_history_id: phs[0].id}
+    prices_to_import << {value: item_data[:tenth_price][index], date: date, price_history_id: phs[1].id}
+    prices_to_import << {value: item_data[:tenth_price][index], date: date, price_history_id: phs[2].id}
     
-    item = Item.create!(
-      name: item_data[:name],
-      img_url: item_data[:img_url],
-      ressource_type: item_data[:ressource_type]
-    )
-
-    # Trouver ou créer les PriceHistories
-    price_histories = {
-      unit: item.price_histories.find_or_create_by!(price_type: 0),
-      tenth: item.price_histories.find_or_create_by!(price_type: 1),
-      hundred: item.price_histories.find_or_create_by!(price_type: 2)
-    }
-
-    # Préparer les données pour les prix en masse
-    prices_data = []
-    num = item_data[:unit_price].count
-    num.times do |i|
-      prices_data << { value: item_data[:unit_price][i], date: item_data[:scrap_date][i], price_history_id: price_histories[:unit].id }
-      prices_data << { value: item_data[:tenth_price][i], date: item_data[:scrap_date][i], price_history_id: price_histories[:tenth].id }
-      prices_data << { value: item_data[:hundred_price][i], date: item_data[:scrap_date][i], price_history_id: price_histories[:hundred].id }
-    end
-
-    # Insérer tous les prix en une seule requête
-    Price.insert_all(prices_data)
-
-    # Mettre à jour les PriceHistories
-    price_histories.values.each(&:update_price_history)
   end
+end
+p "Il y'a #{prices_to_import.length} prix à stocker"
+batch_size = 50000
+puts "Il y a #{prices_to_import.length / batch_size} batch."
+prices_to_import.each_slice(batch_size).with_index do |batch, index|
+  p "Création des prices pour un batch de #{batch.size} - batch n°: #{index}"
+  Price.insert_all(batch)
 end
