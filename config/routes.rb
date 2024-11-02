@@ -13,7 +13,7 @@ Rails.application.routes.draw do
         resources :items, only: %i[show index] 
        
         namespace :seeds do
-          get 'items'
+          post 'populate'
           get 'infos'
         end
     
