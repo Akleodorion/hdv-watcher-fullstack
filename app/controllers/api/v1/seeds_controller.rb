@@ -3,7 +3,7 @@ class API::V1::SeedsController < ApplicationController
   # Ajout d'items en base de donnés.
   def populate
     price_to_import = []
-    items_data = populate_params(:items).to_sym
+    items_data = JSON.parse(request.body.read, symbolize_names: true)
 
     items_data.each do |item_data|
       item_created = Item.create!(name: item_data[:name], img_url: item_data[:img_url], ressource_type: item_data[:ressource_type])
