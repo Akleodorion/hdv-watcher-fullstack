@@ -16,7 +16,6 @@ class API::V1::SeedsController < ApplicationController
         price_to_import << Price.new(value: item_data[:hundred_price], date: date, price_history_id: ph_ids[2])
       end
     end
-
     Price.import(price_to_import)    
   end
 
