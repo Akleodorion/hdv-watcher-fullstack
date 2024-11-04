@@ -25,12 +25,15 @@ class API::V1::ScrapsController < ApplicationController
     Price.import(prices_to_import)
   end
 
+  # Les informations générales que l'on veut recevoir.
   def infos
+    #1. La dernière date de scrapping.
+    #2. Le nombre d'objet en BDD ?
   end
 
   private
 
   def entry_params
-    params.permit(:name, :img_rl, :ressource_type, :unit_price, :tenth_price, :hundred_price)
+    params.permit(:name, :img_url, :ressource_type, :unit_price, :tenth_price, :hundred_price)
   end
 end
