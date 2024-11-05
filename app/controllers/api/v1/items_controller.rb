@@ -1,7 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
   before_action :set_batch_size, only: %i[seeds_items seeds_info]
 
-   # ***********************API MOBILE *************************    
   def index
     @price_type = paginated_items_params[:price_type].to_sym
     @selected_batch_size = paginated_items_params[:batch_size].to_i
@@ -24,41 +23,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-  @item = Item.find(item_prices_params[:id])
-  end
-  
-  # ***********************Scrap related *************************    
-  
-  def scrap_entry
-    # on recoit une liste d'item depuis la requête.
-    # on itère sur la demande
-    # vérification de l'éxistence de l'item en BDD
-    # Si l'item existe.
-    # Append
-    # Sinon
-    # Creation.
-  end
-
-  def scrap_info
-    #recoit les informations relative au scrapping.
-  end
-
-  def seeds_items
-  batch_index = params[:batch_index].to_i
-
-  @items = Item.all
-  @items = @items.limit(@batch_size)
-  @items = @items.offset(batch_index * @batch_size)
-
-  render json: @items
-  end
-
-  def seeds_info
-    batch_count = (Item.all.count.to_f / @batch_size).ceil
-
-    render json: {
-      batch_count:
-    }
+    @item = Item.find(item_prices_params[:id])
   end
 
   private
