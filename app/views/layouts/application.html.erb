@@ -11,6 +11,21 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div style ="display: flex; justify-content: space-between; margin: 10px 10px">
+      <img src = "https://imgs.search.brave.com/xbesjbOKD6g8G6xZBxUz5k1TTNrx89fKLV232OP_4as/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZjBiNThhYTA1/MTVkMzRiOTczMjQ4/NjgxZTM2NDY3MWVm/Y2QzNThhZjVmOTVj/NjlmMTlkNzkzODIx/MGM3YWM5Mi93d3cu/a2FtYXNwYXNjaGVy/LmNvbS8">
+      <ul style = "background-color: orange">
+        <li style = "display: inline-block">Item</li>
+        <li style = "display: inline-block">Familier</li>
+        <li style = "display: inline-block">Craft</li>
+      </ul>
+    </div>
+    <div style = "display: flex; width: 100%"> 
+      <div style = "background-color: red; width: 15%; text-align: center;">
+        <span>Filtres</span>
+      </div>
+      <div style = "width: 85%">
+        <%= yield %>
+      </div>
+    </div>
   </body>
 </html>
